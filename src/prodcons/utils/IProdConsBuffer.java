@@ -13,4 +13,5 @@ public interface IProdConsBuffer {
 	// return the total number of put operations
 	public int totmsg();
 
+	boolean noErrors();
 }

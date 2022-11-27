@@ -1,6 +1,7 @@
-package prodcons.semaphores;
+package prodcons;
 
 import prodcons.utils.Consumer;
+import prodcons.utils.IProdConsBuffer;
 import prodcons.utils.Producer;
 
 import java.io.IOException;
@@ -10,12 +11,15 @@ import static java.lang.Thread.sleep;
 import static prodcons.utils.Print.print;
 
 public class Main {
+
 	static Properties properties = new Properties();
 	static boolean print = false;
 
+	static String[] packageNames = {"prodcons.solutionDirect", "prodcons.semaphores"};
+
 	public static void getProperties(String fileName) throws IOException {
 		Properties properties = new Properties();
-		properties.loadFromXML(Main.class.getResourceAsStream("../utils/" + fileName + ".xml"));
+		properties.loadFromXML(Main.class.getResourceAsStream("utils/" + fileName + ".xml"));
 		Main.properties = properties;
 	}
 
@@ -27,7 +31,7 @@ public class Main {
 		}
 	}
 
-	public static int main(String[] args, String fileName, Boolean print) throws IOException, InterruptedException {
+	public static int main(String[] args, String fileName, Boolean print, String packageName) throws IOException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		Main.print = print;
 		// load the properties
 		getProperties(fileName);
@@ -37,7 +41,9 @@ public class Main {
 
 		// create the buffer
 		print("Creating the buffer", print);
-		ProdConsBuffer buffer = new ProdConsBuffer(Integer.parseInt(properties.getProperty("bufSz")));
+
+		// create the buffer associated with the package name
+		IProdConsBuffer buffer = (IProdConsBuffer) Class.forName(packageName + ".ProdConsBuffer").newInstance();
 
 		// create the producers
 		int nProducers = Integer.parseInt(properties.getProperty("nProd"));
@@ -98,7 +104,10 @@ public class Main {
 		return buffer.nmsg();
 	}
 
-	public static void main(String[] args) throws IOException, InterruptedException {
-		System.out.println(main(args, "options-short", false));
+	public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+		for (String packageName : packageNames) {
+			System.out.println("Main " + packageName);
+			main(args, "options-short", true, packageName);
+		}
 	}
 }

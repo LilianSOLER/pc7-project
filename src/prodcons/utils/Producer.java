@@ -65,7 +65,7 @@ public class Producer extends Thread {
 	public void produce(Message message) throws InterruptedException {
 		// put the message in the buffer
 		buffer.put(message);
-		print("Producer " + id + " produced :" + message, print);
+		print("Producer " + id + " produced :" + message.getMsg(), print);
 	}
 
 	public void stopRunning() {
