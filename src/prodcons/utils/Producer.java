@@ -1,6 +1,5 @@
-package prodcons.solutionDirect;
+package prodcons.utils;
 
-import prodcons.utils.Message;
 
 import java.util.Random;
 
@@ -8,7 +7,7 @@ import static prodcons.utils.Print.print;
 
 public class Producer extends Thread {
 	private int id;
-	private ProdConsBuffer buffer;
+	private IProdConsBuffer buffer;
 
 	private static int prodTime = 10;
 
@@ -19,7 +18,7 @@ public class Producer extends Thread {
 
 	private static boolean print = false;
 
-	public Producer(ProdConsBuffer buffer, int id) {
+	public Producer(IProdConsBuffer buffer, int id) {
 		this.id = id;
 		this.buffer = buffer;
 		this.start();

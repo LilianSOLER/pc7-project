@@ -1,8 +1,7 @@
 package prodcons.semaphores;
 
-import prodcons.solutionDirect.Consumer;
-import prodcons.solutionDirect.ProdConsBuffer;
-import prodcons.solutionDirect.Producer;
+import prodcons.utils.Consumer;
+import prodcons.utils.Producer;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -38,35 +37,35 @@ public class Main {
 
 		// create the buffer
 		print("Creating the buffer", print);
-		prodcons.solutionDirect.ProdConsBuffer buffer = new ProdConsBuffer(Integer.parseInt(properties.getProperty("bufSz")));
+		ProdConsBuffer buffer = new ProdConsBuffer(Integer.parseInt(properties.getProperty("bufSz")));
 
 		// create the producers
 		int nProducers = Integer.parseInt(properties.getProperty("nProd"));
 		int prodTime = Integer.parseInt(properties.getProperty("prodTime"));
 		print("Creating the producers", print);
 
-		prodcons.solutionDirect.Producer[] producers = new prodcons.solutionDirect.Producer[nProducers];
+		Producer[] producers = new Producer[nProducers];
 		for (int i = 0; i < nProducers; i++) {
-			producers[i] = new prodcons.solutionDirect.Producer(buffer, i);
+			producers[i] = new Producer(buffer, i);
 		}
 
-		prodcons.solutionDirect.Producer.setProdTime(prodTime);
-		prodcons.solutionDirect.Producer.setMinProd(Integer.parseInt(properties.getProperty("minProd")));
-		prodcons.solutionDirect.Producer.setMaxProd(Integer.parseInt(properties.getProperty("maxProd")));
-		prodcons.solutionDirect.Producer.setPrint(print);
+		Producer.setProdTime(prodTime);
+		Producer.setMinProd(Integer.parseInt(properties.getProperty("minProd")));
+		Producer.setMaxProd(Integer.parseInt(properties.getProperty("maxProd")));
+		Producer.setPrint(print);
 
 		// create the consumers
 		int nConsumers = Integer.parseInt(properties.getProperty("nCons"));
 		int consTime = Integer.parseInt(properties.getProperty("consTime"));
 		print("Creating the consumers", print);
 
-		prodcons.solutionDirect.Consumer[] consumers = new prodcons.solutionDirect.Consumer[nConsumers];
+		Consumer[] consumers = new Consumer[nConsumers];
 		for (int i = 0; i < nConsumers; i++) {
-			consumers[i] = new prodcons.solutionDirect.Consumer(buffer, i + nProducers);
+			consumers[i] = new Consumer(buffer, i + nProducers);
 		}
 
-		prodcons.solutionDirect.Consumer.setConsTime(consTime);
-		prodcons.solutionDirect.Consumer.setPrint(print);
+		Consumer.setConsTime(consTime);
+		Consumer.setPrint(print);
 
 		// wait for the producers to finish
 		for (Producer producer : producers) {

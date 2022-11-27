@@ -1,5 +1,8 @@
 package prodcons.solutionDirect;
 
+import prodcons.utils.Consumer;
+import prodcons.utils.Producer;
+
 import java.io.IOException;
 import java.util.Properties;
 

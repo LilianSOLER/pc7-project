@@ -1,11 +1,11 @@
-package prodcons.solutionDirect;
+package prodcons.utils;
 
 import static prodcons.utils.Print.print;
 
 public class Consumer extends Thread {
 
 	private int id;
-	private ProdConsBuffer buffer;
+	private IProdConsBuffer buffer;
 
 	private static int consTime;
 
@@ -13,7 +13,7 @@ public class Consumer extends Thread {
 
 	private static boolean print = false;
 
-	public Consumer(ProdConsBuffer buffer, int id) {
+	public Consumer(IProdConsBuffer buffer, int id) {
 		this.id = id;
 		this.buffer = buffer;
 		this.start();
