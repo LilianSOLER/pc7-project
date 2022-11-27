@@ -5,18 +5,25 @@ public class Consumer extends Thread {
 		private int id;
 		private ProdConsBuffer buffer;
 
-		private int consTime;
+		private static int consTime;
 
 		private boolean running = true;
 
-		public Consumer(ProdConsBuffer buffer, int id, int consTime) {
+		public Consumer(ProdConsBuffer buffer, int id) {
 			this.id = id;
 			this.buffer = buffer;
-			this.consTime = consTime;
 			this.start();
 		}
 
-		public void run() {
+		public int getID() {
+			return id;
+		}
+
+	public static void setConsTime(int consTime) {
+		Consumer.consTime = consTime;
+	}
+
+	public void run() {
 			System.out.println("Consumer " + id + " started");
 			while (this.running) {
 				try {
@@ -31,9 +38,9 @@ public class Consumer extends Thread {
 
 		public void consume() throws InterruptedException {
 			// get the message from the buffer
-
+			String message = buffer.get();
 			// display the message
-			System.out.println("Consumer " + id + " consumed");
+			System.out.println("Consumer " + id + " consumed message: " + message);
 		}
 
 		public void stopRunning() {
