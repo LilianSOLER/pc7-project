@@ -3,6 +3,8 @@ package prodcons.solutionDirect;
 import prodcons.utils.IProdConsBuffer;
 import prodcons.utils.Message;
 
+import static prodcons.utils.Print.print;
+
 public class ProdConsBuffer implements IProdConsBuffer {
 
 	private Message[] buffer;
@@ -11,6 +13,8 @@ public class ProdConsBuffer implements IProdConsBuffer {
 	private int count;
 
 	private int totalMessages;
+
+	private static boolean print = false;
 
 	public ProdConsBuffer() {
 		buffer = new Message[10];
@@ -62,8 +66,9 @@ public class ProdConsBuffer implements IProdConsBuffer {
 
 	@Override
 	public int nmsg() {
-		return in - out;
+		return count;
 	}
+
 
 	@Override
 	public int totmsg() {
@@ -75,20 +80,20 @@ public class ProdConsBuffer implements IProdConsBuffer {
 	}
 
 	public void printBuffer() {
-		System.out.println("Buffer: ");
+		print("Buffer: ", print);
 		for (int i = 0; i < buffer.length; i++) {
 			if (buffer[i] != null) {
-				System.out.println(buffer[i].getMsg());
+				print(buffer[i].getMsg(), print);
 			}
 		}
 	}
 
 	public void printBufferState() {
-		System.out.println("Buffer state: ");
-		System.out.println("in: " + in);
-		System.out.println("out: " + out);
-		System.out.println("count: " + count);
-		System.out.println("totalMessages: " + totalMessages);
+		print("Buffer state: ", print);
+		print("in: " + in, print);
+		print("out: " + out, print);
+		print("count: " + count, print);
+		print("totalMessages: " + totalMessages, print);
 	}
 
 	public void printBufferStateAndBuffer() {

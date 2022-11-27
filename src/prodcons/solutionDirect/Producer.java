@@ -4,6 +4,8 @@ import prodcons.utils.Message;
 
 import java.util.Random;
 
+import static prodcons.utils.Print.print;
+
 public class Producer extends Thread {
 	private int id;
 	private ProdConsBuffer buffer;
@@ -14,6 +16,8 @@ public class Producer extends Thread {
 	private static int minProd = 5;
 
 	private boolean running = true;
+
+	private static boolean print = false;
 
 	public Producer(ProdConsBuffer buffer, int id) {
 		this.id = id;
@@ -33,18 +37,22 @@ public class Producer extends Thread {
 		Producer.maxProd = maxProd;
 	}
 
+	public static void setPrint(Boolean print) {
+		Producer.print = print;
+	}
+
 	public void run() {
-		System.out.println("Producer " + id + " started");
+		print("Producer " + id + " started", print);
 
 		//generate a random number of messages to produce
 		Random random = new Random();
 		int nMessages = random.nextInt(maxProd - minProd) + minProd;
 
-		System.out.println("Producer " + id + " will produce " + nMessages + " messages");
+		print("Producer " + id + " will produce " + nMessages + " messages", print);
 
 		while (this.running && nMessages > 0) {
 			try {
-				produce(new Message("message " + id + " - " + nMessages , id));
+				produce(new Message("message " + id + " - " + nMessages, id));
 				nMessages--;
 				sleep(prodTime);
 			} catch (InterruptedException e) {
@@ -52,13 +60,13 @@ public class Producer extends Thread {
 				this.interrupt();
 			}
 		}
-		System.out.println("Producer " + id + " finished");
+		print("Producer " + id + " finished", print);
 	}
 
 	public void produce(Message message) throws InterruptedException {
 		// put the message in the buffer
 		buffer.put(message);
-		System.out.println("Producer " + id + " produced");
+		print("Producer " + id + " produced :" + message, print);
 	}
 
 	public void stopRunning() {

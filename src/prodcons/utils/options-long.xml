@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="nProd">100</entry>
+    <entry key="nCons">100</entry>
+    <entry key="bufSz">100</entry>
+    <entry key="prodTime">5</entry>
+    <entry key="consTime">5</entry>
+    <entry key="minProd">100</entry>
+    <entry key="maxProd">1000</entry>
+</properties>

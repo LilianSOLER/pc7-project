@@ -4,9 +4,12 @@ import java.io.IOException;
 import java.util.Properties;
 
 import static java.lang.Thread.sleep;
+import static prodcons.utils.Print.print;
 
 public class Main {
 	static Properties properties = new Properties();
+	static boolean print = false;
+
 	public static void getProperties(String fileName) throws IOException {
 		Properties properties = new Properties();
 		properties.loadFromXML(Main.class.getResourceAsStream("../utils/" + fileName + ".xml"));
@@ -17,24 +20,26 @@ public class Main {
 		// display the properties
 		for (String key : properties.stringPropertyNames()) {
 			String value = properties.getProperty(key);
-			System.out.println(key + ": " + value);
+			print(key + ": " + value, print);
 		}
 	}
-	public static void main(String[] args) throws IOException, InterruptedException {
+
+	public static int main(String[] args, String fileName, Boolean print) throws IOException, InterruptedException {
+		Main.print = print;
 		// load the properties
-		getProperties("options");
+		getProperties(fileName);
 		// display the properties
 		displayProperties();
 
 
 		// create the buffer
-		System.out.println("Creating the buffer");
-		ProdConsBuffer buffer = new ProdConsBuffer();
+		print("Creating the buffer", print);
+		ProdConsBuffer buffer = new ProdConsBuffer(Integer.parseInt(properties.getProperty("bufSz")));
 
 		// create the producers
 		int nProducers = Integer.parseInt(properties.getProperty("nProd"));
 		int prodTime = Integer.parseInt(properties.getProperty("prodTime"));
-		System.out.println("Creating " + nProducers + " producers");
+		print("Creating the producers", print);
 
 		Producer[] producers = new Producer[nProducers];
 		for (int i = 0; i < nProducers; i++) {
@@ -44,11 +49,12 @@ public class Main {
 		Producer.setProdTime(prodTime);
 		Producer.setMinProd(Integer.parseInt(properties.getProperty("minProd")));
 		Producer.setMaxProd(Integer.parseInt(properties.getProperty("maxProd")));
+		Producer.setPrint(print);
 
 		// create the consumers
 		int nConsumers = Integer.parseInt(properties.getProperty("nCons"));
 		int consTime = Integer.parseInt(properties.getProperty("consTime"));
-		System.out.println("Creating " + nConsumers + " consumers");
+		print("Creating the consumers", print);
 
 		Consumer[] consumers = new Consumer[nConsumers];
 		for (int i = 0; i < nConsumers; i++) {
@@ -56,34 +62,40 @@ public class Main {
 		}
 
 		Consumer.setConsTime(consTime);
+		Consumer.setPrint(print);
 
 		// wait for the producers to finish
 		for (Producer producer : producers) {
 			producer.join();
 		}
-		System.out.println("All producers finished");
+		print("All producers have finished", print);
 
 		// verify that the buffer is empty and stop the consumers if it is not empty yet re ask at 50 ms intervals
-		System.out.println("Waiting for the buffer to be empty");
+		print("Verifying that the buffer is empty", print);
 		while (buffer.nmsg() != 0) {
-			System.out.println("Buffer is not empty yet, waiting for consumers to finish");
-			System.out.println("Buffer size: " + buffer.nmsg());
+			print("Buffer is not empty, waiting 50 ms", print);
+			print("Buffer size: " + buffer.nmsg(), print);
 			sleep(50);
 		}
 
 		// stop the consumers
-		System.out.println("Stopping the consumers");
+		print("Stopping the consumers", print);
 		for (Consumer consumer : consumers) {
 			consumer.stopRunning();
 		}
-		System.out.println("All consumers finished");
+		print("All consumers have finished", print);
 
 		// verify if no message was lost
-		System.out.println("Verifying if no message was lost");
-		if(buffer.noErrors()) {
-			System.out.println("No message was lost");
+		print("Verifying that no message was lost", print);
+		if (buffer.noErrors()) {
+			print("No message was lost", print);
 		} else {
-			System.out.println("Some messages were lost");
+			print("Some messages were lost", print);
 		}
+		return buffer.nmsg();
+	}
+
+	public static void main(String[] args) throws IOException, InterruptedException {
+		System.out.println(main(args, "options-short", false));
 	}
 }
