@@ -3,7 +3,7 @@
 <properties>
     <entry key="nProd">15</entry>
     <entry key="nCons">10</entry>
-    <entry key="bufSz">1</entry>
+    <entry key="bufSz">20</entry>
     <entry key="prodTime">10</entry>
     <entry key="consTime">10</entry>
     <entry key="minProd">5</entry>

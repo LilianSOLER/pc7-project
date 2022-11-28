@@ -51,16 +51,33 @@ public class ProdConsBuffer implements IProdConsBuffer {
 	}
 
 	@Override
-	public String get() throws InterruptedException {
+	public Message get() throws InterruptedException {
 		notEmpty.acquire();
 		synchronized (this) {
-			String message = buffer[out].getMsg();
+			Message message = buffer[out];
 			out = (out + 1) % buffer.length;
 			count--;
 			printBufferState();
 			notifyAll();
 			notFull.release();
 			return message;
+		}
+	}
+
+	@Override
+	public Message[] get(int k) throws InterruptedException {
+		notEmpty.acquire(k);
+		synchronized (this) {
+			Message[] messages = new Message[k];
+			for (int i = 0; i < k; i++) {
+				messages[i] = buffer[out];
+				out = (out + 1) % buffer.length;
+				count--;
+			}
+			printBufferState();
+			notifyAll();
+			notFull.release(k);
+			return messages;
 		}
 	}
 
@@ -76,6 +93,11 @@ public class ProdConsBuffer implements IProdConsBuffer {
 
 	public boolean noErrors() {
 		return count == 0 && in == out;
+	}
+
+	@Override
+	public int getSize() {
+		return buffer.length;
 	}
 
 	public void printBuffer() {

@@ -6,7 +6,7 @@ import static prodcons.utils.Print.print;
 
 public class TestProdCons {
 
-	static String[] fileNames = {"options-short", "options", "options-long"};
+	static String[] fileNames = {"options", "options-long"};
 	static boolean print = true;
 
 	static String[] packageNames = {"prodcons.solutionDirect", "prodcons.semaphores"};
@@ -15,7 +15,7 @@ public class TestProdCons {
 		int error = 0;
 		int nErrors = 0;
 
-		print("Testing semaphores solution with " + nTests + " tests and " + fileName + ".xml", print);
+		print("Testing " + packageName + " with " + nTests + " tests and " + fileName + ".xml", print);
 		for (int i = 0; i < nTests; i++) {
 			error += Main.main(args, fileName, false, packageName);
 			if (error != 0) {
@@ -40,8 +40,8 @@ public class TestProdCons {
 		int errorRateAvg = 0;
 		int errorRatePerTestAvg = 0;
 		boolean hasErrors = false;
-		int coeffTest = 1;
-		int nTests = 100;
+		int coeffTest = 2;
+		int nTests = 64;
 		for (String fileName : fileNames) {
 			int[] errorRate = test(packageName, fileName, nTests / coeffTest, args);
 			if (errorRate[0] != 0) {
@@ -49,7 +49,7 @@ public class TestProdCons {
 			}
 			errorRateAvg += errorRate[0];
 			errorRatePerTestAvg += errorRate[1];
-			coeffTest *= 10;
+			coeffTest *= 2;
 			if (coeffTest > nTests) {
 				coeffTest = nTests;
 			}
@@ -75,12 +75,26 @@ public class TestProdCons {
 	}
 
 	public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+		// begin a timer
+		long startTime = System.currentTimeMillis();
 		for (String packageName : packageNames) {
 			System.out.println("Testing " + packageName);
 			test(packageName, args);
 			System.out.println("\n");
 		}
+		// end a timer
+		long endTime = System.currentTimeMillis();
+		// print the time in the correct unit (min or sec or ms) and the unit itself
+		int time = (int) (endTime - startTime);
+		if (time > 60000) {
+			System.out.println("Time: " + time / 60000 + " min");
+		} else if (time > 1000) {
+			System.out.println("Time: " + time / 1000 + " sec");
+		} else {
+			System.out.println("Time: " + time + " ms");
+		}
 		System.out.println("Done");
+		System.exit(0);
 	}
 }
 

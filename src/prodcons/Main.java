@@ -67,7 +67,7 @@ public class Main {
 
 		Consumer[] consumers = new Consumer[nConsumers];
 		for (int i = 0; i < nConsumers; i++) {
-			consumers[i] = new Consumer(buffer, i + nProducers);
+			consumers[i] = new Consumer(buffer, i + nProducers, i % 2 == 0);
 		}
 
 		Consumer.setConsTime(consTime);
@@ -107,7 +107,8 @@ public class Main {
 	public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		for (String packageName : packageNames) {
 			System.out.println("Main " + packageName);
-			main(args, "options-short", true, packageName);
+			main(args, "options-long", true, packageName);
 		}
+		System.exit(0);
 	}
 }
