@@ -45,7 +45,14 @@ public class Producer extends Thread {
 
 		//generate a random number of messages to produce
 		Random random = new Random();
-		int nMessages = random.nextInt(maxProd - minProd) + minProd;
+		int maxMinDiff = maxProd - minProd;
+		if (maxMinDiff < 0) {
+			maxMinDiff = -maxMinDiff;
+		}
+		int nMessages = random.nextInt(maxMinDiff) + minProd;
+		if (nMessages < 0) {
+			nMessages = -nMessages;
+		}
 
 		print("Producer " + id + " will produce " + nMessages + " messages", print);
 

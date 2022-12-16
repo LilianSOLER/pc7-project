@@ -11,7 +11,7 @@ public class TestProdCons {
 
 	static int NTESTS = 3;
 
-	static String[] packageNames = {"prodcons.solutionDirect", "prodcons.semaphores"};
+	static String[] packageNames = {"prodcons.v1", "prodcons.v2", "prodcons.v3", "prodcons.v5"};
 
 	static int[] test(String packageName, String fileName, int nTests, String[] args) throws IOException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		int error = 0;
