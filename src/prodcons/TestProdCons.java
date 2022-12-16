@@ -6,8 +6,10 @@ import static prodcons.utils.Print.print;
 
 public class TestProdCons {
 
-	static String[] fileNames = {"options", "options-long"};
+	static String[] fileNames = {"options-short", "options", "options-long"};
 	static boolean print = true;
+
+	static int NTESTS = 3;
 
 	static String[] packageNames = {"prodcons.solutionDirect", "prodcons.semaphores"};
 
@@ -41,7 +43,11 @@ public class TestProdCons {
 		int errorRatePerTestAvg = 0;
 		boolean hasErrors = false;
 		int coeffTest = 2;
-		int nTests = 64;
+		int nTests = NTESTS;
+		if (NTESTS < fileNames.length) {
+			nTests = fileNames.length;
+		}
+		nTests = (int) Math.pow(2, nTests);
 		for (String fileName : fileNames) {
 			int[] errorRate = test(packageName, fileName, nTests / coeffTest, args);
 			if (errorRate[0] != 0) {
@@ -75,17 +81,11 @@ public class TestProdCons {
 	}
 
 	public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-		// begin a timer
-		long startTime = System.currentTimeMillis();
-		for (String packageName : packageNames) {
-			System.out.println("Testing " + packageName);
-			test(packageName, args);
-			System.out.println("\n");
-		}
-		// end a timer
-		long endTime = System.currentTimeMillis();
-		// print the time in the correct unit (min or sec or ms) and the unit itself
-		int time = (int) (endTime - startTime);
+		test(args);
+	}
+
+	private static void displayTime(long startTimePackage, long endTimePackage) {
+		int time = (int) (endTimePackage - startTimePackage);
 		if (time > 60000) {
 			System.out.println("Time: " + time / 60000 + " min");
 		} else if (time > 1000) {
@@ -93,6 +93,23 @@ public class TestProdCons {
 		} else {
 			System.out.println("Time: " + time + " ms");
 		}
+	}
+
+	private static void test(String[] args) throws IOException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+		// begin a timer
+		long startTime = System.currentTimeMillis();
+		for (String packageName : packageNames) {
+			System.out.println("Testing " + packageName);
+			long startTimePackage = System.currentTimeMillis();
+			test(packageName, args);
+			long endTimePackage = System.currentTimeMillis();
+			displayTime(startTimePackage, endTimePackage);
+			System.out.println("\n");
+		}
+		// end a timer
+		long endTime = System.currentTimeMillis();
+		// print the time in the correct unit (min or sec or ms) and the unit itself
+		displayTime(startTime, endTime);
 		System.out.println("Done");
 		System.exit(0);
 	}

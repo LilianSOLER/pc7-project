@@ -15,6 +15,7 @@ public class ProdConsBuffer implements IProdConsBuffer {
 
 	private Semaphore notFull = new Semaphore(10);
 	private Semaphore notEmpty = new Semaphore(0);
+	private Semaphore mutex = new Semaphore(1);
 	private int count;
 
 	private int totalMessages;
@@ -39,46 +40,43 @@ public class ProdConsBuffer implements IProdConsBuffer {
 	@Override
 	public void put(Message message) throws InterruptedException {
 		notFull.acquire();
-		synchronized (this) {
-			buffer[in] = message;
-			in = (in + 1) % buffer.length;
-			count++;
-			totalMessages++;
-			printBufferState();
-			notEmpty.release();
-		}
-
+		mutex.acquire();
+		buffer[in] = message;
+		in = (in + 1) % buffer.length;
+		count++;
+		totalMessages++;
+		printBufferState();
+		mutex.release();
+		notEmpty.release();
 	}
 
 	@Override
 	public Message get() throws InterruptedException {
 		notEmpty.acquire();
-		synchronized (this) {
-			Message message = buffer[out];
-			out = (out + 1) % buffer.length;
-			count--;
-			printBufferState();
-			notifyAll();
-			notFull.release();
-			return message;
-		}
+		mutex.acquire();
+		Message message = buffer[out];
+		out = (out + 1) % buffer.length;
+		count--;
+		printBufferState();
+		mutex.release();
+		notFull.release();
+		return message;
 	}
 
 	@Override
 	public Message[] get(int k) throws InterruptedException {
 		notEmpty.acquire(k);
-		synchronized (this) {
-			Message[] messages = new Message[k];
-			for (int i = 0; i < k; i++) {
-				messages[i] = buffer[out];
-				out = (out + 1) % buffer.length;
-				count--;
-			}
-			printBufferState();
-			notifyAll();
-			notFull.release(k);
-			return messages;
+		mutex.acquire();
+		Message[] messages = new Message[k];
+		for (int i = 0; i < k; i++) {
+			messages[i] = buffer[out];
+			out = (out + 1) % buffer.length;
+			count--;
 		}
+		printBufferState();
+		mutex.release();
+		notFull.release(k);
+		return messages;
 	}
 
 	@Override
@@ -102,9 +100,9 @@ public class ProdConsBuffer implements IProdConsBuffer {
 
 	public void printBuffer() {
 		print("Buffer: ", print);
-		for (int i = 0; i < buffer.length; i++) {
-			if (buffer[i] != null) {
-				print(buffer[i].getMsg(), print);
+		for (Message message : buffer) {
+			if (message != null) {
+				print(message.getMsg(), print);
 			}
 		}
 	}

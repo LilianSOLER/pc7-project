@@ -81,10 +81,13 @@ public class Main {
 
 		// verify that the buffer is empty and stop the consumers if it is not empty yet re ask at 50 ms intervals
 		print("Verifying that the buffer is empty", print);
-		while (buffer.nmsg() != 0) {
+		int nLoops = 0;
+		int maxLoops = buffer.getSize() * 50;
+		while (buffer.nmsg() != 0 && nLoops < maxLoops) {
 			print("Buffer is not empty, waiting 50 ms", print);
 			print("Buffer size: " + buffer.nmsg(), print);
 			sleep(50);
+			nLoops++;
 		}
 
 		// stop the consumers
@@ -96,7 +99,7 @@ public class Main {
 
 		// verify if no message was lost
 		print("Verifying that no message was lost", print);
-		if (buffer.noErrors()) {
+		if (buffer.noErrors() && nLoops < maxLoops) {
 			print("No message was lost", print);
 		} else {
 			print("Some messages were lost", print);
@@ -107,7 +110,7 @@ public class Main {
 	public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		for (String packageName : packageNames) {
 			System.out.println("Main " + packageName);
-			main(args, "options-long", true, packageName);
+			main(args, "options", true, packageName);
 		}
 		System.exit(0);
 	}
